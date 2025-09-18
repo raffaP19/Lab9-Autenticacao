@@ -1,5 +1,7 @@
 package br.ufpb.dcx.dsc.figurinhas.services;
 
+import br.ufpb.dcx.dsc.figurinhas.dto.ChangePasswordDTO;
+import br.ufpb.dcx.dsc.figurinhas.dto.UserDTO;
 import br.ufpb.dcx.dsc.figurinhas.models.Album;
 import br.ufpb.dcx.dsc.figurinhas.models.Figurinha;
 import br.ufpb.dcx.dsc.figurinhas.models.Photo;
@@ -8,6 +10,8 @@ import br.ufpb.dcx.dsc.figurinhas.repository.AlbumRepository;
 import br.ufpb.dcx.dsc.figurinhas.repository.FigurinhaRepository;
 import br.ufpb.dcx.dsc.figurinhas.repository.PhotoRepository;
 import br.ufpb.dcx.dsc.figurinhas.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -22,6 +26,9 @@ public class UserService {
     private AlbumRepository albumRepository;
     private FigurinhaRepository figurinhaRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     public UserService(FigurinhaRepository figurinhaRepository, AlbumRepository albumRepository, UserRepository userRepository, PhotoRepository photoRepository){
         this.userRepository = userRepository;
         this.photoRepository = photoRepository;
@@ -32,6 +39,7 @@ public class UserService {
     public List<User> listUsers() {
         return userRepository.findAll();
     }
+
     public User getUser(Long userId) {
 
         if(userId != null)
@@ -39,13 +47,43 @@ public class UserService {
         return null;
     }
 
-    public User createUser(User user){
+    public User createUser(UserDTO userDTO){
+
+        User newUser = new User();
+        newUser.setUsername(userDTO.getUsername());
+        newUser.setNome(userDTO.getNome());
+        newUser.setEmail(userDTO.getEmail());
+
+        String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
+        newUser.setPassword(encodedPassword);
 
         Photo photo = new Photo("www.exemplo.com/foto.png");
         photoRepository.save(photo);
-        user.setPhoto(photo);
-        return userRepository.save(user);
+        newUser.setPhoto(photo);
+
+        return userRepository.save(newUser);
     }
+
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        User user = (User) userRepository.findByUsername(changePasswordDTO.username());
+
+        if (user == null) {
+            throw new RuntimeException("Usuário não encontrado!");
+        }
+
+        String encodedPassword = passwordEncoder.encode(changePasswordDTO.newPassword());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+    }
+
+//    public User createUser(User user){
+//
+//        Photo photo = new Photo("www.exemplo.com/foto.png");
+//        photoRepository.save(photo);
+//        user.setPhoto(photo);
+//        return userRepository.save(user);
+//    }
 
     public User updateUser(Long userId, User u) {
         Optional<User> userOpt = userRepository.findById(userId);

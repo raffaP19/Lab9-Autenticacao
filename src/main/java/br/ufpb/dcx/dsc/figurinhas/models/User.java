@@ -1,6 +1,5 @@
 package br.ufpb.dcx.dsc.figurinhas.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -18,12 +17,20 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @OneToOne
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
     @OneToMany(mappedBy = "user")
     private List<Album> albuns;
+
+    public User() {}
 
     public Long getUserId() {
         return userId;
@@ -49,6 +56,22 @@ public class User {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Photo getPhoto() {
         return photo;
     }
@@ -64,4 +87,5 @@ public class User {
     public void setAlbuns(List<Album> albuns) {
         this.albuns = albuns;
     }
+
 }

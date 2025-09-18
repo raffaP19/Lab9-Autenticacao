@@ -5,25 +5,35 @@ import br.ufpb.dcx.dsc.figurinhas.models.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public class UserDTO {
 
-    private Long id;
-    @NotBlank
+
+    @NotBlank(message = "Campo obrigatório")
+    private String username;
+
+    @NotBlank(message = "Campo obrigatório")
     private String nome;
-    @Email
+
+    @Email(message = "Email inválido")
     private String email;
+
+    @NotBlank(message = "Campo obrigatório")
+    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
+    private String password;
 
     private Photo photo;
 
-    public UserDTO(){}
-
-    public Long getId() {
-        return id;
+    public UserDTO() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getNome() {
@@ -42,6 +52,14 @@ public class UserDTO {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Photo getPhoto() {
         return photo;
     }
@@ -50,13 +68,4 @@ public class UserDTO {
         this.photo = photo;
     }
 
-    @Override
-    public String toString() {
-        return "UserDTO{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", photo=" + photo +
-                '}';
-    }
 }

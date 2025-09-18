@@ -56,7 +56,7 @@ public class Photo {
         return "Photo{" +
                 "photoId=" + photoId +
                 ", URL='" + URL + '\'' +
-                ", user=" + user +
                 '}';
     }
+
 }

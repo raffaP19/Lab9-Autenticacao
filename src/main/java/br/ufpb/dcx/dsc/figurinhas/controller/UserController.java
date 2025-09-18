@@ -37,10 +37,10 @@ public class UserController {
 
 
     @PostMapping(path = "/user")
-    UserDTO createUser(@Valid @RequestBody UserDTO userDTO){
-        User u = convertToEntity(userDTO);
-        User saved = userService.createUser(u);
-        return convertToDTO(saved);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDTO createUser(@Valid @RequestBody UserDTO userDTO){
+        User savedUser = userService.createUser(userDTO);
+        return convertToDTO(savedUser);
     }
 
     @PutMapping("/user/{userId}")
